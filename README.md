@@ -1,6 +1,6 @@
 # BitMas
 
-#### Repository translates: [українська :ukraine:](#bitmas-ukraine), [english :england:](#bitmas-england)
+#### Repository translates: [українська :ukraine:](#bitmas-ukraine), [english :uk:](#bitmas-england)
 
 ## BitMas :ukraine:
 
@@ -38,7 +38,7 @@ g++ main.cpp -o bitmas
 ./bitmas
 ```
 
-## BitMas :england:
+## BitMas :uk:
 
 ***Bitmas*** is an application that generates an animated Christmas tree in the terminal.
 
