@@ -21,8 +21,7 @@ const string colors[] = {
     colorGreen,
     colorRed,
     colorYellow,
-    colorBlue
-};
+    colorBlue};
 
 // Animation delays
 const int typingDelay = 100000;
@@ -34,13 +33,15 @@ const int treeChangeDelay = 500000;
 bool stopAnimation = false;
 
 // Function to handle Ctrl+C signal
-void handleCtrlC(int signum) {
+void handleCtrlC(int signum)
+{
     stopAnimation = true;
     exit(0);
 }
 
 // Function to get terminal size
-void getTerminalSize(int& height, int& width) {
+void getTerminalSize(int &height, int &width)
+{
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
     height = size.ws_row;
@@ -48,62 +49,75 @@ void getTerminalSize(int& height, int& width) {
 }
 
 // Function to get the current year
-int getCurrentYear() {
+int getCurrentYear()
+{
     time_t now = time(nullptr);
-    struct tm* tm_now = localtime(&now);
+    struct tm *tm_now = localtime(&now);
     return (tm_now->tm_mon + 1 == 12) ? 1900 + tm_now->tm_year + 1 : 1900 + tm_now->tm_year;
 }
 
 // Function to check if the current month is December or January
-bool getHolidayMonth() {
+bool getHolidayMonth()
+{
     time_t now = time(nullptr);
-    struct tm* tm_now = localtime(&now);
+    struct tm *tm_now = localtime(&now);
     return (tm_now->tm_mon + 1 == 12 || tm_now->tm_mon + 1 == 1);
 }
 
 // Function to get a random color from predefined colors
-string getRandomColor() {
+string getRandomColor()
+{
     int index = rand() % (sizeof(colors) / sizeof(colors[0]));
     return colors[index];
 }
 
 // Function to clear the console screen
-void clearScreen() {
+void clearScreen()
+{
     cout << "\033c";
 }
 
 // Function to print spaces
-void printSpaces(int count) {
-    for (int i = 0; i < count; ++i) {
+void printSpaces(int count)
+{
+    for (int i = 0; i < count; ++i)
+    {
         cout << " ";
     }
 }
 
 // Function to print spaces at the top
-void printTopSpace(int height) {
-    for (int i = 0; i < height; i++) {
+void printTopSpace(int height)
+{
+    for (int i = 0; i < height; i++)
+    {
         cout << "" << endl;
     }
 }
 
 // Function to print spaces on the left
-void printLeftSpace(int width) {
-    for (int i = 0; i < width; i++) {
+void printLeftSpace(int width)
+{
+    for (int i = 0; i < width; i++)
+    {
         cout << " ";
     }
 }
 
 // Function to print a tree
-void printTree(int height, int width) {
+void printTree(int height, int width)
+{
     int maxTreeWidth = 2 * height - 1;
     int startPosition = (width - maxTreeWidth) / 2;
     printTopSpace(height);
-    for (int i = 1; i <= height; ++i) {
+    for (int i = 1; i <= height; ++i)
+    {
         printLeftSpace(width);
         printSpaces(startPosition);
         printSpaces(height - i);
-        for (int k = 0; k < 2 * i - 1; ++k) {
-            cout << ((i == 1) ? colorYellow : colorGreen) << "*" << colorReset;
+        for (int k = 0; k < 2 * i - 1; ++k)
+        {
+            cout << colorGreen << "*" << colorReset;
         }
         cout << endl;
     }
@@ -115,20 +129,27 @@ void printTree(int height, int width) {
 }
 
 // Function to animate a tree
-void animateTree(int height, int width, int blinkInterval, int year) {
+void animateTree(int height, int width, int blinkInterval, int year)
+{
     int maxTreeWidth = 2 * height - 1;
     int startPosition = (width - maxTreeWidth) / 2;
-    while (true) {
+    while (true)
+    {
         clearScreen();
         printTopSpace(height);
-        for (int i = 1; i <= height; ++i) {
+        for (int i = 1; i <= height; ++i)
+        {
             printLeftSpace(width);
             printSpaces(startPosition);
             printSpaces(height - i);
-            for (int k = 0; k < 2 * i - 1; ++k) {
-                if (rand() % 5 == 0) {
+            for (int k = 0; k < 2 * i - 1; ++k)
+            {
+                if (rand() % 5 == 0)
+                {
                     cout << getRandomColor() << "0" << colorReset;
-                } else {
+                }
+                else
+                {
                     cout << colorGreen << "*" << colorReset;
                 }
             }
@@ -144,7 +165,8 @@ void animateTree(int height, int width, int blinkInterval, int year) {
         int spacesBefore = (width - text.length()) / 2;
         printLeftSpace(width);
         printSpaces(spacesBefore);
-        for (char c : text) {
+        for (char c : text)
+        {
             string textColor = getRandomColor();
             cout << textColor << c << colorReset;
             cout.flush();
@@ -160,14 +182,17 @@ mutex treeMutex;
 mutex textMutex;
 
 // Wrapper function to animate the tree with a mutex
-void animateTreeWrapper(int height, int width, int blinkInterval, int year) {
-    while (true) {
+void animateTreeWrapper(int height, int width, int blinkInterval, int year)
+{
+    while (true)
+    {
         lock_guard<mutex> lock(treeMutex);
         animateTree(height, width, blinkInterval, year);
     }
 }
 
-int main() {
+int main()
+{
     // Register Ctrl+C signal handler
     signal(SIGINT, handleCtrlC);
 
@@ -181,19 +206,24 @@ int main() {
     int year = getCurrentYear();
     bool isHolidayMonth = getHolidayMonth();
 
-    if (isHolidayMonth) {
+    if (isHolidayMonth)
+    {
         // Start tree animation thread for holiday month
         clearScreen();
         thread treeThread(animateTreeWrapper, terminalHeight / 3, terminalWidth / 3, blinkInterval, year);
-        while (!stopAnimation) {
+        while (!stopAnimation)
+        {
             usleep(treeChangeDelay);
         }
         treeThread.join();
-    } else {
+    }
+    else
+    {
         // Start tree printing thread for non-holiday month
         clearScreen();
         thread treeThread(printTree, terminalHeight / 3, terminalWidth / 3);
-        while (!stopAnimation) {
+        while (!stopAnimation)
+        {
             usleep(treeChangeDelay);
         }
         treeThread.join();
