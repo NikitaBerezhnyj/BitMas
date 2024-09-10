@@ -1,6 +1,6 @@
 # BitMas
 
-#### Repository translates: [українська :ukraine:](#bitmas-ukraine), [english :uk:](#bitmas-england)
+#### Repository translates: [українська :ukraine:](#bitmas-ukraine), [english :uk:](#bitmas-uk)
 
 ## BitMas :ukraine:
 
